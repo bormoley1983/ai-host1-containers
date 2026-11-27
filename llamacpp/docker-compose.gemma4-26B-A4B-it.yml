@@ -1,0 +1,34 @@
+services:
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: llamacpp
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /models/llamacpp:/models
+      - /models/llamacpp-cache:/root/.cache/llama.cpp
+    command: >
+      -m /models/gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf
+      --host 0.0.0.0
+      --port 8080
+      --n-gpu-layers 999
+      --parallel 1
+      --ctx-size 65536
+      --threads 16
+      --batch-size 128
+      --ubatch-size 64
+      --flash-attn on
+      --cache-type-k q8_0
+      --cache-type-v q8_0
+      --cache-ram 0
+      --kv-unified
+      --alias gemma4
+      --jinja
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

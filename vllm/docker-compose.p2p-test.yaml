@@ -1,0 +1,57 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-p2p-test
+    restart: "no"
+
+#    ports:
+#      - "8001:8000"
+
+    volumes:
+      - /models/vllm:/root/.cache/huggingface
+
+    environment:
+      HF_HOME: /root/.cache/huggingface
+      PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+      NCCL_DEBUG: INFO
+      NCCL_DEBUG_SUBSYS: INIT,GRAPH,P2P,SHM
+      NCCL_P2P_DISABLE: "${P2P_DISABLED:-0}"
+
+    ipc: host
+
+    command:
+      - quocbao747/Ornith-1.5-9B-AWQ-W4A16-g128
+      - --served-model-name
+      - ornith-p2p-test
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --dtype
+      - auto
+      - --tensor-parallel-size
+      - "2"
+      - --disable-custom-all-reduce
+      - --max-model-len
+      - "32768"
+      - --gpu-memory-utilization
+      - "0.65"
+      - --kv-cache-dtype
+      - fp8
+      - --max-num-seqs
+      - "2"
+      - --max-num-batched-tokens
+      - "8192"
+      - --enable-chunked-prefill
+      - --no-enable-prefix-caching
+      - --trust-remote-code
+      - --generation-config
+      - vllm
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0", "1"]
+              capabilities: [gpu]

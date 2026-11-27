@@ -1,0 +1,32 @@
+services:
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: llamacpp
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Folder with your GGUF models
+      - /models/llamacpp:/models
+    command: >
+      -m /models/qwen3.5-27b-instruct-q4_k_m.gguf
+      #-m /models/gemma4-26b-instruct-q4_k_m.gguf
+      --host 0.0.0.0
+      --port 8080
+      --n-gpu-layers 999
+      --ctx-size 8192
+      --threads 8
+      --batch-size 512
+      --ubatch-size 512
+      --flash-attn
+      #-m /models/qwen3.6-35b-instruct-q4_k_m.gguf
+      #--ctx-size 4096
+      #--batch-size 256
+      #--ubatch-size 256
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

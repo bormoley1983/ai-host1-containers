@@ -1,0 +1,22 @@
+# Secrets — never commit real credentials
+.env
+.env.*
+*.env.local
+
+# Keep the non-secret llamacpp env templates (they hold no passwords)
+!llamacpp/.env
+!llamacpp/*.env
+
+# Venvs, caches, logs, build output
+.venv/
+__pycache__/
+*.pyc
+.cache/
+*.log
+node_modules/
+dist/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/

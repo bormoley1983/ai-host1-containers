@@ -1,0 +1,87 @@
+model_list:
+
+  - model_name: local-gemma4:26B-128K
+    litellm_params:
+      model: ollama_chat/gemma4:26b
+      api_base: http://ollama:11434
+      timeout: 1200
+      num_ctx: 131072
+      drop_params: true
+    model_info:
+      max_input_tokens: 122880
+      max_output_tokens: 8192
+      supports_function_calling: true
+
+  - model_name: local-gemma4:31B-QAT-96K
+    litellm_params:
+      model: ollama_chat/gemma4:31b-it-qat
+      api_base: http://ollama:11434
+      timeout: 1200
+      num_ctx: 98304
+      drop_params: true
+    model_info:
+      max_input_tokens: 94208
+      max_output_tokens: 4096
+      supports_function_calling: true
+
+  - model_name: local-gemma4:31B-QAT-64K
+    litellm_params:
+      model: ollama_chat/gemma4:31b-it-qat
+      api_base: http://ollama:11434
+      timeout: 1200
+      num_ctx: 65536
+      drop_params: true
+    model_info:
+      max_input_tokens: 61440
+      max_output_tokens: 4096
+      supports_function_calling: true
+
+
+  - model_name: local-gemma4:31B-40K
+    litellm_params:
+      model: ollama_chat/gemma4:31b
+      api_base: http://ollama:11434
+      timeout: 900
+      num_ctx: 40960
+      drop_params: true
+    model_info:
+      max_input_tokens: 36864
+      max_output_tokens: 4096
+      supports_function_calling: true
+
+  - model_name: local-qwen3.6:27B-64K
+    litellm_params:
+      model: ollama_chat/qwen3.6:27b
+      api_base: http://ollama:11434
+      timeout: 1200
+      num_ctx: 65536
+      drop_params: true
+    model_info:
+      max_input_tokens: 57344
+      max_output_tokens: 8192
+      supports_function_calling: true
+
+  - model_name: local-qwen3.6:27B-128K
+    litellm_params:
+      model: ollama_chat/qwen3.6:27b
+      api_base: http://ollama:11434
+      timeout: 1200
+      num_ctx: 131072
+      think: true
+      drop_params: true
+    model_info:
+      max_input_tokens: 122880
+      max_output_tokens: 8192
+      supports_function_calling: true
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+
+router_settings:
+  num_retries: 1
+  timeout: 1200
+  cooldown_time: 30
+  allowed_fails: 2

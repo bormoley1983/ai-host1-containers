@@ -1,0 +1,62 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: litellm
+    restart: unless-stopped
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    command:
+      - --config
+      - /app/config.yaml
+      - --port
+      - "4000"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+
+    ports:
+      - "4000:4000"
+
+    networks:
+      - llm-backends
+      - llm-clients
+
+  litellm-pgvector:
+    build:
+      context: ./litellm-pgvector
+      dockerfile: Dockerfile
+
+    container_name: litellm-pgvector
+    restart: unless-stopped
+
+    env_file:
+      - .env.pgvector
+
+    ports:
+      # Accessible only from the Docker host for administration/testing.
+      - "127.0.0.1:8001:8000"
+
+    networks:
+      - llm-backends
+
+    depends_on:
+      - litellm
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+networks:
+  llm-backends:
+    external: true
+
+  llm-clients:
+    external: true

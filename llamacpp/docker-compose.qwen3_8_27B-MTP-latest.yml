@@ -1,0 +1,114 @@
+services:
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: llamacpp
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - /models/llamacpp:/models:ro
+      - /models/llamacpp-templates/qwen-chat-template.jinja:/templates/qwen-chat-template.jinja:ro
+      - /models/llamacpp-cache:/root/.cache/llama.cpp
+
+    command:
+      - -m
+      - /models/Qwen3.8-27B-UD-Q4_K_XL.gguf
+
+      - --port
+      - "8080"
+
+      - --alias
+      - ${LLAMA_ALIAS:-local-qwen3.8:27B-144K}
+
+      - --n-gpu-layers
+      - all
+
+      # Fail instead of automatically adapting configuration to VRAM.
+      - --fit
+      - "off"
+
+      - --ctx-size
+      - ${LLAMA_CTX_SIZE:-147456}
+      - --n-predict
+      - ${LLAMA_N_PREDICT:-16384}
+
+      - --parallel
+      - ${LLAMA_PARALLEL:-2}
+      - --kv-unified
+      # - --kv-unified-per-slot
+      # - ${LLAMA_CTX_PER_SLOT:-65536}
+
+      # Keep active KV on GPU.
+      - --kv-offload
+
+      # Simultaneously batch tokens from active slots.
+      - --cont-batching
+
+      - --threads
+      - "10"
+      - --threads-batch
+      - "10"
+
+      - --batch-size
+      - ${LLAMA_BATCH_SIZE:-512}
+      - --ubatch-size
+      - ${LLAMA_UBATCH_SIZE:-256}
+
+      - --flash-attn
+      - "on"
+      - --cache-type-k
+      - q8_0
+      - --cache-type-v
+      - q8_0
+      - --spec-draft-type-k
+      - ${LLAMA_SPEC_DRAFT_CACHE_TYPE_K:-q8_0}
+
+      - --spec-draft-type-v
+      - ${LLAMA_SPEC_DRAFT_CACHE_TYPE_V:-q8_0}
+
+      - --jinja
+      - --chat-template-file
+      - /templates/qwen-chat-template.jinja
+      - --reasoning
+      - "off"
+
+      - --spec-type
+      - draft-mtp
+      - --spec-draft-n-max
+      - ${LLAMA_SPEC_DRAFT_N_MAX:-2}
+      - --spec-draft-p-min
+      - "0.85"
+
+      - --cache-prompt
+      - --cache-ram
+      - "8192"
+      - --cache-idle-slots
+
+      - --timeout
+      - "1200"
+      - --sse-ping-interval
+      - "15"
+
+      - --temp
+      - "0.7"
+      - --top-p
+      - "0.8"
+      - --top-k
+      - "20"
+      - --min-p
+      - "0.0"
+      - --presence-penalty
+      - "1.5"
+      - --repeat-penalty
+      - "1.0"
+
+      - --metrics
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]

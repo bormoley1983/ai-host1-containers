@@ -1,0 +1,61 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - /models/ollama:/root/.ollama
+      - /models/ollama-modelfiles:/modelfiles:ro
+
+    environment:
+      OLLAMA_MODELS: /root/.ollama
+
+      # Make GPU ordering explicit
+#      CUDA_VISIBLE_DEVICES: "1,0"
+
+      # Distribute a model across all visible GPUs
+      OLLAMA_SCHED_SPREAD: "true"
+
+      # Memory/performance
+      OLLAMA_FLASH_ATTENTION: "true"
+      OLLAMA_KV_CACHE_TYPE: q8_0
+
+      # Only one concurrent request for long-context models
+#      OLLAMA_NUM_PARALLEL: "2"
+      OLLAMA_NUM_PARALLEL: "1"
+
+
+      # Prevent multiple large models competing for VRAM
+      OLLAMA_MAX_LOADED_MODELS: "2"
+
+      # Reserve ~512 MiB per GPU for CUDA/runtime overhead
+      OLLAMA_GPU_OVERHEAD: "536870912"
+
+      OLLAMA_KEEP_ALIVE: 30m
+      OLLAMA_LOAD_TIMEOUT: 15m
+      OLLAMA_MAX_QUEUE: "32"
+
+      # Disable Ollama cloud execution/features
+      OLLAMA_NO_CLOUD: "true"
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+#              device_ids: ["1", "0"]
+              device_ids: ["0"]
+              capabilities: [gpu]
+
+    networks:
+      - default
+      - llm-backends
+
+networks:
+  default: {}
+  llm-backends:
+    external: true
