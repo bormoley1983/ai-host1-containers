@@ -1,0 +1,30 @@
+services:
+  comfyui:
+    image: yanwk/comfyui-boot:cu130-slim-v2
+    container_name: comfyui
+    restart: unless-stopped
+
+    ports:
+      - "8188:8188"
+
+    volumes:
+      - /models/comfyui/models:/root/ComfyUI/models
+
+      - ${HOME}/comfyui/input:/root/ComfyUI/input
+      - ${HOME}/comfyui/output:/root/ComfyUI/output
+      - ${HOME}/comfyui/user:/root/ComfyUI/user
+      - ${HOME}/comfyui/custom_nodes:/root/ComfyUI/custom_nodes
+
+      - ${HOME}/comfyui/cache:/root/.cache
+
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0 --port 8188
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]

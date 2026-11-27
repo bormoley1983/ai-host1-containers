@@ -10,6 +10,9 @@ Config backup for the AI host (LLM serving stack). Per-service docker-compose fi
 | `litellm/` | LiteLLM proxy configs (model_list) + compose. Secrets via `.env` (not committed) |
 | `vllm/` | vLLM compose files (incl. P2P test variant) |
 | `llamacpp/` | llama.cpp server env templates (per-context-size), compose variants, multi-GPU plan |
+| `comfyui/` | ComfyUI compose files, custom nodes, user scripts, settings |
+| `benchmarks/` | Ollama serving benchmark results per GPU / power limit |
+| `gpu-tooling/p2p/` | P2P kernel patch + vLLM P2P test compose (see `benchmarks-and-tooling.md`) |
 
 ## Secrets
 

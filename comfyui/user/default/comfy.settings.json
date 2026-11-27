@@ -1,0 +1,18 @@
+{
+    "Comfy.Execution.PreviewMethod": "taesd",
+    "Comfy.UseNewMenu": "Top",
+    "Comfy.Extension.Disabled": [
+        "pysssss.Locking",
+        "pysssss.SnapToGrid",
+        "pysssss.FaviconStatus",
+        "KJNodes.browserstatus",
+        "Comfy.Legacy.ManagerMenu",
+        "Comfy.Legacy.CustomNodesManager"
+    ],
+    "Comfy.DevMode": true,
+    "Comfy.Templates.SortBy": "popular",
+    "Comfy.RightSidePanel.IsOpen": true,
+    "Comfy.Templates.SelectedModels": [
+        "SDXL"
+    ]
+}
