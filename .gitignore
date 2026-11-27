@@ -1,20 +1,30 @@
 # Secrets — never commit real credentials
-.env
-.env.*
+litellm/.env
+litellm/.env.pgvector
 *.env.local
 
-# Keep the non-secret llamacpp env templates (they hold no passwords)
+# Keep non-secret env templates (llamacpp: context sizes, batch params — no passwords)
 !llamacpp/.env
 !llamacpp/*.env
 
-# Venvs, caches, logs, build output
+# Runtime state / regenerable junk
 .venv/
 __pycache__/
 *.pyc
 .cache/
+tmp/
 *.log
 node_modules/
 dist/
+
+# comfyui runtime (models live on /models, not here)
+comfyui/input/
+comfyui/output/
+comfyui/cache/
+comfyui/user/comfyui.db*
+comfyui/user/*.log
+comfyui/user/__manager/cache/
+comfyui/user/__manager/snapshots/
 
 # OS / IDE
 .DS_Store
